@@ -1,0 +1,11 @@
+-
+  name: Confirm reboot
+  hosts: server2
+  tasks:
+   - name: verify a reboot was actually initiated
+      # machine should have started after it has been rebooted
+     shell: uptime
+     register: uptime
+
+   - debug: msg="{{ ansible_default_ipv4.address }} uptime = {{ uptime.stdout }}"
+

@@ -1,0 +1,19 @@
+-
+  name: Kernel patching
+  hosts: server2
+  tasks:
+ 
+   - name: check reboot required after kernel yum_update
+     shell: KERNEL_NEW=$(rpm -q --last kernel |head -1 | awk '{print $1}' | sed 's/kernel.//'); KERNEL_NOW=$(uname -r);if [[ $KERNEL_NEW != $KERNEL_NOW ]]; then echo "Reboot_needed"; else echo "Reboot not required"; fi
+     ignore_errors: true
+     register: reboot_required
+ 
+   - debug: msg="{{ ansible_default_ipv4.address }} = {{ reboot_required.stdout }}"
+   
+   - name: Rebooting servers now ...
+     command: shutdown -r +1 "{{ ansible_default_ipv4.address }} server rebooted successfully...!!!"
+     async: 0
+     poll: 0
+     ignore_errors: true
+    # when: reboot_required == "Reboot_needed"
+     register: reboot_started

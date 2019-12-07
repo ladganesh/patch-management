@@ -1,0 +1,72 @@
+-
+  name: Kernel patching
+  hosts: server2
+  tasks:
+   -
+     name: install security plugin
+     shell: yum install yum-plugin-security -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.plugin
+
+   -
+     name: list security update description
+     shell: yum info-sec >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.desc
+
+   -
+     name: security update list information
+     shell: yum updateinfo list --security >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.list
+
+   -
+     name: Security CVE
+     shell: yum updateinfo list cves  >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.CVE
+     
+   -
+     name: kernel patch
+     shell: yum update --security -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
+     
+   -
+     name: kernel update
+     shell: yum update kernel -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
+     
+   -
+     name: kernel required module
+     shell: yum install kernel-headers kernel-devel -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
+
+
+   -
+     name: copy security plugin file from remote server to ansible server
+     fetch:
+      src: /root/{{ ansible_default_ipv4.address }}.plugin
+      dest: /root/
+
+   -
+     name: copy security update description file from remote server to ansible server
+     fetch:
+      src: /root/{{ ansible_default_ipv4.address }}.desc
+      dest: /root/
+
+   -
+     name: copy security update list information file from remote server to ansible server
+     fetch:
+      src: /root/{{ ansible_default_ipv4.address }}.list
+      dest: /root/
+
+   -
+     name: copy Security CVE file from remote server to ansible server
+     fetch:
+      src: /root/{{ ansible_default_ipv4.address }}.CVE
+      dest: /root/
+      
+   -
+     name: copy security patch file from remote server to ansible server
+     fetch:
+      src: /root/{{ ansible_default_ipv4.address }}.sec
+      dest: /root/
+      
+   
+   - name: check reboot required after kernel yum_update
+     shell: KERNEL_NEW=$(rpm -q --last kernel |head -1 | awk '{print $1}' | sed 's/kernel.//'); KERNEL_NOW=$(uname -r);if [[ $KERNEL_NEW != $KERNEL_NOW ]]; then echo "Reboot_needed"; else echo "Reboot not required"; fi
+     ignore_errors: true
+     register: reboot_required
+ 
+   - debug: msg="{{ ansible_default_ipv4.address }} = {{ reboot_required.stdout }}"
+   
+

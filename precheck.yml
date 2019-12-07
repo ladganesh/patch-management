@@ -1,0 +1,21 @@
+-
+  name: create precheck file
+  hosts: server2
+  tasks:
+    -
+     name: copy with specific ownership
+     copy:
+        src: precheck.sh
+        dest: /root/
+    -
+     name: run script and store output in variable
+     command: sh precheck.sh
+     register: precheck_info
+     ignore_errors: True
+
+    -
+     name: copy precheck file from remote server to anisible server
+     fetch:
+      src: /root/{{ ansible_default_ipv4.address }}
+      dest: /root/
+

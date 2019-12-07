@@ -1,0 +1,18 @@
+-
+  name: Server reboot after kernel patching
+  hosts: server2
+  tasks:
+ 
+   - name: check server os
+     shell: subscription-manager status
+     ignore_errors: true
+     register: reboot_required
+ 
+   - debug: msg="{{ ansible_default_ipv4.address }} = {{ reboot_required.stdout }}"
+   
+   - name: check redhat subscription
+     shell: cat /etc/redhat-release
+     ignore_errors: true
+     register: reboot_required
+ 
+   - debug: msg="{{ ansible_default_ipv4.address }} = {{ reboot_required.stdout }}"

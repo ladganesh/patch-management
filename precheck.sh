@@ -55,6 +55,7 @@ cat /proc/mounts >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}'
 echo "=================================================================================" >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
 
 cat /etc/rc.local | grep mount >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
+cat /etc/rc.local | grep route >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
 
 
 

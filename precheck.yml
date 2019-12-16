@@ -1,15 +1,21 @@
--
-  name: create precheck file
-  hosts: server2
-  tasks:
+ - hosts: '{{ setupHosts }}'
+   vars_prompt:
+    - name: "setupHosts"
+      prompt: "Which hosts would you like to setup?"
+      private: no
+   become: true
+   become_user: root
+   become_method: sudo
+   tasks:
     -
      name: copy with specific ownership
      copy:
         src: precheck.sh
-        dest: /root/
+        dest: /root
+
     -
      name: run script and store output in variable
-     command: sh precheck.sh
+     command: sudo sh /root/precheck.sh
      register: precheck_info
      ignore_errors: True
 
@@ -18,4 +24,3 @@
      fetch:
       src: /root/{{ ansible_default_ipv4.address }}
       dest: /root/
-

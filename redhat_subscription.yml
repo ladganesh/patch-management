@@ -1,7 +1,12 @@
--
-  name: Server reboot after kernel patching
-  hosts: server2
-  tasks:
+ - hosts: '{{ setupHosts }}'
+   vars_prompt:
+    - name: "setupHosts"
+      prompt: "Which hosts would you like to setup?"
+      private: no
+   become: true
+   become_user: root
+   become_method: sudo
+   tasks:
  
    - name: check server os
      shell: subscription-manager status

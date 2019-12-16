@@ -1,7 +1,13 @@
--
-  name: Kernel patching
-  hosts: server2
-  tasks:
+ - name: kernel patching
+   hosts: '{{ setupHosts }}'
+   vars_prompt:
+    - name: "setupHosts"
+      prompt: "Which hosts would you like to setup?"
+      private: no
+   become: true
+   become_user: root
+   become_method: sudo
+   tasks:
  
    - name: check reboot required after kernel yum_update
      shell: KERNEL_NEW=$(rpm -q --last kernel |head -1 | awk '{print $1}' | sed 's/kernel.//'); KERNEL_NOW=$(uname -r);if [[ $KERNEL_NEW != $KERNEL_NOW ]]; then echo "Reboot_needed"; else echo "Reboot not required"; fi

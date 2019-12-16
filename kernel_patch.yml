@@ -1,34 +1,40 @@
--
-  name: Kernel patching
-  hosts: server2
-  tasks:
+ - name: kernel patching
+   hosts: '{{ setupHosts }}'
+   vars_prompt:
+    - name: "setupHosts"
+      prompt: "Which hosts would you like to setup?"
+      private: no
+   become: true
+   become_user: root
+   become_method: sudo
+   tasks:
    -
      name: install security plugin
-     shell: yum install yum-plugin-security -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.plugin
+     shell: yum install yum-plugin-security -y >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.plugin
 
    -
      name: list security update description
-     shell: yum info-sec >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.desc
+     shell: yum info-sec >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.desc
 
    -
      name: security update list information
-     shell: yum updateinfo list --security >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.list
+     shell: yum updateinfo list --security >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.list
 
    -
      name: Security CVE
-     shell: yum updateinfo list cves  >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.CVE
+     shell: yum updateinfo list cves  >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.CVE
      
    -
      name: kernel patch
-     shell: yum update --security -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
+     shell: yum update --security -y >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
      
    -
      name: kernel update
-     shell: yum update kernel -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
+     shell: yum update kernel -y >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
      
    -
      name: kernel required module
-     shell: yum install kernel-headers kernel-devel -y >> `ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
+     shell: yum install kernel-headers kernel-devel -y >> /root/`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`.sec
 
 
    -
@@ -68,5 +74,3 @@
      register: reboot_required
  
    - debug: msg="{{ ansible_default_ipv4.address }} = {{ reboot_required.stdout }}"
-   
-

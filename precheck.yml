@@ -8,6 +8,11 @@
    become_method: sudo
    tasks:
     -
+     name: run script and store output in variable
+     command: mkdir -p /root/patching
+     register: precheck_info
+     ignore_errors: True
+    -
      name: copy with specific ownership
      copy:
         src: precheck.sh

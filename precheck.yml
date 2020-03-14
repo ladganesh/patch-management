@@ -1,7 +1,4 @@
  - hosts: all
-   become: true
-   become_user: root
-   become_method: sudo
    tasks:
     -
      name: run script and store output in variable

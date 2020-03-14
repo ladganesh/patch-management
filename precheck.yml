@@ -8,7 +8,7 @@
     -
      name: copy with specific ownership
      copy:
-        src: /home/awx/precheck.sh
+        src: precheck.sh
         dest: /root
 
     -

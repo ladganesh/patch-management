@@ -4,3 +4,6 @@
   tasks:
     - name: Hello Message
       shell: uptime
+      register: uptime
+
+    - debug: msg="{{ ansible_default_ipv4.address }} uptime = {{ uptime.stdout }}"

@@ -1,8 +1,4 @@
- - hosts: '{{ setupHosts }}'
-   vars_prompt:
-    - name: "setupHosts"
-      prompt: "Which hosts would you like to setup?"
-      private: no
+ - hosts: all
    become: true
    become_user: root
    become_method: sudo
@@ -15,7 +11,7 @@
     -
      name: copy with specific ownership
      copy:
-        src: precheck.sh
+        src: /home/awx/precheck.sh
         dest: /root
 
     -
@@ -27,5 +23,5 @@
     -
      name: copy precheck file from remote server to anisible server
      fetch:
-      src: /root/{{ ansible_default_ipv4.address }}
-      dest: /root/
+      src: /root/patching/{{ ansible_default_ipv4.address }}
+      dest: /root/EDF/
